@@ -1,0 +1,25 @@
+# Build-Ausgaben (.NET / Visual Studio)
+bin/
+obj/
+.vs/
+*.user
+*.suo
+
+# Tenant-Daten: NIE committen
+# - Backups, die erzeugte Skripte bei Apply anlegen
+backup/
+# - Rohexporte aus Export-IntuneConfigPolicy.ps1 (enthalten Tenant-Konfiguration)
+exports/
+*-export.json
+asr.json
+firewall.json
+bitlocker.json
+# - Ergebnisse des Assessments / ausgefuellte Kundenchecklisten
+*_ausgefuellt*.xlsx
+assessment/output/
+
+# Erzeugte Skripte fuer Kunden (Beispielskript in generated-example/ bleibt versioniert)
+Set-M365Hardening.ps1
+
+# Office-Sperrdateien
+~$*

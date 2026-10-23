@@ -1,0 +1,41 @@
+{
+  "$schemaVersion": "0.1",
+  "id": "entra.ca.requireMfaAllUsers",
+  "checklistNr": "A-04",
+  "workload": "Entra",
+  "category": "Conditional Access",
+  "title": "CA: MFA fuer alle Benutzer erzwingen",
+  "description": "Conditional-Access-Richtlinie, die MFA fuer alle Benutzer verlangt.",
+  "tier": "Pflicht",
+
+  "riskClass": "C",
+  "riskRationale": "Scharf geschaltet kann eine solche CA-Richtlinie Nutzer UND Admins aussperren. Daher ueber dieses Werkzeug NICHT erzeugbar.",
+
+  "safeMode": {
+    "assignment": "unassigned",
+    "mode": "reportOnly",
+    "note": "Nur manuell und zunaechst Report-only, mit Break-Glass-Ausschluss."
+  },
+
+  "ui": {
+    "selectable": false,
+    "locked": true,
+    "warnText": "AUSSPERR-GEFAHR: Ueber dieses Werkzeug nicht erzeugbar. Wenn ueberhaupt, manuell - zunaechst Report-only und mit Break-Glass-Ausschluss."
+  },
+
+  "requiredScopes": [],
+  "naming": { "prefix": "4S-", "policyName": "" },
+
+  "graph": {
+    "resource": "/identity/conditionalAccess/policies",
+    "matchBy": "displayName",
+    "createBody": {
+      "_note": "Bewusst leer - Klasse C wird vom Generator nie erzeugt."
+    }
+  },
+
+  "revert": { "strategy": "custom", "note": "n/a - nicht erzeugbar." },
+  "dependsOn": [],
+  "verifyInTestTenant": "Entfaellt - Klasse C ist in der UI gesperrt.",
+  "references": [ "Entra Conditional Access" ]
+}

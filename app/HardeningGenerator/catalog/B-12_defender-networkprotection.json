@@ -1,0 +1,69 @@
+{
+  "$schemaVersion": "0.1",
+  "id": "intune.defender.networkProtection",
+  "checklistNr": "B-12",
+  "workload": "Intune",
+  "category": "Antivirus",
+  "title": "Defender: Netzwerkschutz (Network Protection)",
+  "description": "Aktiviert den Netzwerkschutz von Microsoft Defender. Wird im sicheren Modus zunaechst im AUDIT-Modus erzeugt (nicht blockierend).",
+  "tier": "Best Practice",
+
+  "riskClass": "B",
+  "riskRationale": "Network Protection kann im Block-Modus den Zugriff auf Ressourcen stoeren (betriebskritisch). Darum nur Audit-Modus erzeugbar.",
+
+  "safeMode": {
+    "assignment": "unassigned",
+    "mode": "audit",
+    "note": "Erzeugt im Audit-Modus und ohne Zuweisung. Umschalten auf Block ist ein bewusster, manueller Schritt nach Validierung."
+  },
+
+  "ui": {
+    "selectable": true,
+    "locked": false,
+    "warnText": "Betriebskritisch: wird nur im Audit-Modus erzeugt. 'Block' und Zuweisung bewusst manuell nach Test."
+  },
+
+  "requiredScopes": [ "DeviceManagementConfiguration.ReadWrite.All" ],
+
+  "naming": { "prefix": "4S-", "policyName": "4S-Defender-NetworkProtection-Audit" },
+
+  "graph": {
+    "resource": "/deviceManagement/configurationPolicies",
+    "matchBy": "name",
+    "createBody": {
+      "name": "{{policyName}}",
+      "description": "Erstellt durch 4sight Hardening Generator ({{timestamp}}) - Checkliste B-12 (Network Protection, AUDIT).",
+      "platforms": "windows10",
+      "technologies": "mdm,microsoftSense",
+      "roleScopeTagIds": [ "0" ],
+      "settings": [
+        {
+          "@odata.type": "#microsoft.graph.deviceManagementConfigurationSetting",
+          "settingInstance": {
+            "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+            "settingDefinitionId": "device_vendor_msft_policy_config_defender_enablenetworkprotection",
+            "choiceSettingValue": {
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingValue",
+              "value": "device_vendor_msft_policy_config_defender_enablenetworkprotection_2",
+              "children": []
+            }
+          }
+        }
+      ]
+    },
+    "readback": {
+      "settingDefinitionId": "device_vendor_msft_policy_config_defender_enablenetworkprotection",
+      "desiredValue": "device_vendor_msft_policy_config_defender_enablenetworkprotection_2",
+      "valueMeaning": {
+        "device_vendor_msft_policy_config_defender_enablenetworkprotection_0": "Deaktiviert",
+        "device_vendor_msft_policy_config_defender_enablenetworkprotection_1": "Block (scharf)",
+        "device_vendor_msft_policy_config_defender_enablenetworkprotection_2": "Audit"
+      }
+    }
+  },
+
+  "revert": { "strategy": "restoreFromBackup", "note": "Backup vor Aenderung; Revert stellt Vorzustand wieder her bzw. loescht das angelegte Profil." },
+  "dependsOn": [],
+  "verifyInTestTenant": "settingDefinitionId/Choice-Value (EnableNetworkProtection: 0=aus,1=Block,2=Audit) im Test-Tenant verifizieren.",
+  "references": [ "Defender CSP EnableNetworkProtection" ]
+}

@@ -1,0 +1,99 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "4sight Hardening Generator - Katalog-Einstellung",
+  "description": "Definition EINER waehlbaren Einstellung. Der Katalog (viele solcher Dateien) ist das versionierte Kernstueck; er treibt sowohl die UI als auch die Skript-Erzeugung.",
+  "type": "object",
+  "required": ["id", "checklistNr", "workload", "title", "tier", "riskClass", "safeMode", "requiredScopes", "naming", "graph", "revert"],
+  "properties": {
+    "id":          { "type": "string", "description": "Stabile technische ID, z. B. intune.defender.av.realtimeMonitoring" },
+    "checklistNr": { "type": "string", "description": "Nr. aus der v1.2-Checkliste, z. B. B-08 (Andockung)" },
+    "workload":    { "type": "string", "enum": ["Intune", "Entra", "DefenderOffice", "Exchange", "Purview", "SharePoint"] },
+    "category":    { "type": "string" },
+    "title":       { "type": "string" },
+    "description": { "type": "string" },
+    "tier":        { "type": "string", "enum": ["Pflicht", "Best Practice", "Optional"] },
+
+    "riskClass": {
+      "type": "string",
+      "enum": ["A", "B", "C"],
+      "description": "A=sicher (normal waehlbar) | B=betriebs-/sicherheitskritisch (nur im sicheren Modus waehlbar, mit Hinweis) | C=aussperr-faehig (in UI gesperrt/ausgegraut)"
+    },
+    "riskRationale": { "type": "string" },
+
+    "safeMode": {
+      "type": "object",
+      "description": "Die sichere Form dieser Einstellung. Bei Intune v1 immer assignment=unassigned; bei ASR/CFA zusaetzlich mode=audit; bei CA (spaeter) state=reportOnly.",
+      "properties": {
+        "assignment": { "type": "string", "enum": ["unassigned", "pilotGroup"] },
+        "mode":       { "type": "string", "enum": ["enforce", "audit", "reportOnly"] },
+        "note":       { "type": "string" }
+      },
+      "required": ["assignment"]
+    },
+
+    "ui": {
+      "type": "object",
+      "description": "Wie die Einstellung in der Oberflaeche erscheint. Fuer Klasse B: selectable=true aber nur sichere Form; Klasse C: locked=true (ausgegraut) + warnText.",
+      "properties": {
+        "selectable": { "type": "boolean" },
+        "locked":     { "type": "boolean" },
+        "warnText":   { "type": ["string", "null"] }
+      }
+    },
+
+    "requiredScopes": {
+      "type": "array", "items": { "type": "string" },
+      "description": "Nur die Graph-Scopes, die diese eine Einstellung braucht (Least Privilege). Der Generator vereinigt die Scopes aller gewaehlten Einstellungen."
+    },
+
+    "naming": {
+      "type": "object",
+      "properties": { "prefix": { "type": "string" }, "policyName": { "type": "string" } },
+      "required": ["policyName"],
+      "description": "Feste Namenskonvention. Objekte mit diesem Namen werden aktualisiert statt doppelt angelegt. Wird bei gesetzter profileGroup durch deren policyName ersetzt."
+    },
+
+    "profileGroup": {
+      "type": "object",
+      "description": "Optional. Eintraege mit gleicher 'id' werden in EIN gemeinsames Profil (policyName) zusammengefasst; deren settings[] werden vereint. Ohne profileGroup bleibt der Eintrag eigenstaendig (naming.policyName).",
+      "required": ["id", "policyName"],
+      "properties": {
+        "id":         { "type": "string" },
+        "policyName": { "type": "string" },
+        "title":      { "type": "string" }
+      }
+    },
+
+    "graph": {
+      "type": "object",
+      "required": ["resource", "createBody"],
+      "properties": {
+        "resource":   { "type": "string", "description": "Graph-Pfad, z. B. /deviceManagement/configurationPolicies" },
+        "matchBy":    { "type": "string", "description": "Feld, ueber das ein bestehendes Objekt erkannt wird (i. d. R. name)" },
+        "createBody": { "type": "object", "description": "Parametrisierter Payload. Platzhalter {{policyName}}, {{timestamp}}." },
+        "readback": {
+          "type": "object",
+          "description": "Wie der Ist-Wert fuer die read-only-Vorschau gelesen und bewertet wird.",
+          "properties": {
+            "settingDefinitionId": { "type": "string" },
+            "desiredValue":        { "type": "string" },
+            "valueMeaning":        { "type": "object" }
+          }
+        }
+      }
+    },
+
+    "revert": {
+      "type": "object",
+      "required": ["strategy"],
+      "properties": {
+        "strategy": { "type": "string", "enum": ["restoreFromBackup", "deleteCreated", "custom"] },
+        "note":     { "type": "string" }
+      }
+    },
+
+    "dependsOn":         { "type": "array", "items": { "type": "string" }, "description": "IDs anderer Einstellungen, die vorausgesetzt werden" },
+    "verifyInTestTenant":{ "type": "string", "description": "Was vor Produktivnutzung in einem Test-Tenant zu pruefen ist" },
+    "references":        { "type": "array", "items": { "type": "string" } }
+  }
+}

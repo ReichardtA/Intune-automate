@@ -1,0 +1,45 @@
+{
+  "$schemaVersion": "0.1",
+  "id": "intune.defender.av.ioavProtection",
+  "checklistNr": "B-13c",
+  "workload": "Intune",
+  "category": "Antivirus",
+  "title": "Defender Antivirus: Download-/Anlagen-Scan aktivieren",
+  "description": "Aktiviert das Scannen heruntergeladener Dateien und E-Mail-Anlagen (AllowIOAVProtection) ueber die AV-Baseline.",
+  "tier": "Best Practice",
+  "riskClass": "A",
+  "riskRationale": "Download-/Anlagen-Scan zu aktivieren sperrt niemanden aus und stoert den Betrieb nicht.",
+  "safeMode": { "assignment": "unassigned", "note": "Teil der AV-Baseline, unassigned." },
+  "ui": { "selectable": true, "locked": false, "warnText": null },
+  "requiredScopes": [ "DeviceManagementConfiguration.ReadWrite.All" ],
+  "naming": { "prefix": "4S-", "policyName": "4S-Defender-AV-IOAVProtection" },
+  "profileGroup": { "id": "defender-av", "policyName": "4S-Defender-AV-Baseline", "title": "Defender Antivirus - Baseline" },
+  "graph": {
+    "resource": "/deviceManagement/configurationPolicies",
+    "matchBy": "name",
+    "createBody": {
+      "name": "{{policyName}}",
+      "description": "Erstellt durch 4sight Hardening Generator ({{timestamp}}) - B-13c (Download-/Anlagen-Scan).",
+      "platforms": "windows10",
+      "technologies": "mdm,microsoftSense",
+      "roleScopeTagIds": [ "0" ],
+      "settings": [
+        { "@odata.type": "#microsoft.graph.deviceManagementConfigurationSetting",
+          "settingInstance": {
+            "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+            "settingDefinitionId": "device_vendor_msft_policy_config_defender_allowioavprotection",
+            "choiceSettingValue": {
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingValue",
+              "value": "device_vendor_msft_policy_config_defender_allowioavprotection_1",
+              "children": [] } } }
+      ]
+    },
+    "readback": {
+      "settingDefinitionId": "device_vendor_msft_policy_config_defender_allowioavprotection",
+      "desiredValue": "device_vendor_msft_policy_config_defender_allowioavprotection_1"
+    }
+  },
+  "revert": { "strategy": "restoreFromBackup", "note": "Teil der AV-Baseline; Revert ueber das Gruppen-Profil." },
+  "verifyInTestTenant": "settingDefinitionId/Choice-Value im Test-Tenant verifizieren (AllowIOAVProtection).",
+  "references": [ "Defender CSP AllowIOAVProtection (0=aus,1=an)" ]
+}

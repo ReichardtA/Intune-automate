@@ -1,0 +1,65 @@
+{
+  "$schemaVersion": "0.1",
+  "id": "intune.defender.av.puaProtection",
+  "checklistNr": "B-10",
+  "workload": "Intune",
+  "category": "Antivirus",
+  "title": "Defender Antivirus: PUA-Schutz = Blockieren",
+  "description": "Blockiert potenziell unerwuenschte Apps (PUA) ueber ein Intune Settings-Catalog-Profil.",
+  "tier": "Best Practice",
+
+  "riskClass": "A",
+  "riskRationale": "PUA-Schutz blockiert Adware/Bundleware und sperrt keine Nutzer aus.",
+
+  "safeMode": {
+    "assignment": "unassigned",
+    "note": "Profil wird ohne Zuweisung erzeugt. Rollout erfolgt bewusst manuell."
+  },
+
+  "ui": { "selectable": true, "locked": false, "warnText": null },
+
+  "requiredScopes": [ "DeviceManagementConfiguration.ReadWrite.All" ],
+
+  "naming": { "prefix": "4S-", "policyName": "4S-Defender-AV-PUAProtection" },
+  "profileGroup": { "id": "defender-av", "policyName": "4S-Defender-AV-Baseline", "title": "Defender Antivirus - Baseline" },
+
+  "graph": {
+    "resource": "/deviceManagement/configurationPolicies",
+    "matchBy": "name",
+    "createBody": {
+      "name": "{{policyName}}",
+      "description": "Erstellt durch 4sight Hardening Generator ({{timestamp}}) - Checkliste B-10 (PUA = Blockieren).",
+      "platforms": "windows10",
+      "technologies": "mdm,microsoftSense",
+      "roleScopeTagIds": [ "0" ],
+      "settings": [
+        {
+          "@odata.type": "#microsoft.graph.deviceManagementConfigurationSetting",
+          "settingInstance": {
+            "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+            "settingDefinitionId": "device_vendor_msft_policy_config_defender_puaprotection",
+            "choiceSettingValue": {
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingValue",
+              "value": "device_vendor_msft_policy_config_defender_puaprotection_1",
+              "children": []
+            }
+          }
+        }
+      ]
+    },
+    "readback": {
+      "settingDefinitionId": "device_vendor_msft_policy_config_defender_puaprotection",
+      "desiredValue": "device_vendor_msft_policy_config_defender_puaprotection_1",
+      "valueMeaning": {
+        "device_vendor_msft_policy_config_defender_puaprotection_0": "Aus",
+        "device_vendor_msft_policy_config_defender_puaprotection_1": "Blockieren",
+        "device_vendor_msft_policy_config_defender_puaprotection_2": "Audit"
+      }
+    }
+  },
+
+  "revert": { "strategy": "restoreFromBackup", "note": "Backup vor Aenderung; Revert stellt Vorzustand wieder her bzw. loescht das angelegte Profil." },
+  "dependsOn": [],
+  "verifyInTestTenant": "settingDefinitionId/Choice-Value (PUAProtection: 0=aus,1=Block,2=Audit) im Test-Tenant verifizieren.",
+  "references": [ "Defender CSP PUAProtection" ]
+}

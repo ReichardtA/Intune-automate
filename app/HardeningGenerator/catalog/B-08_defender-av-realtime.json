@@ -1,0 +1,77 @@
+{
+  "$schemaVersion": "0.1",
+  "id": "intune.defender.av.realtimeMonitoring",
+  "checklistNr": "B-08",
+  "workload": "Intune",
+  "category": "Antivirus",
+  "title": "Defender Antivirus: Echtzeitschutz aktivieren",
+  "description": "Aktiviert den permanenten Echtzeitschutz von Microsoft Defender Antivirus ueber ein Intune Settings-Catalog-Profil (Windows).",
+  "tier": "Pflicht",
+
+  "riskClass": "A",
+  "riskRationale": "Aktivierung des Echtzeitschutzes kann niemanden aussperren und stoert den Betrieb nicht. Normal waehlbar.",
+
+  "safeMode": {
+    "assignment": "unassigned",
+    "note": "Profil wird ohne Zuweisung erzeugt. Der Rollout auf eine Gruppe oder 'Alle' ist ein bewusster, manueller Schritt des Technikers."
+  },
+
+  "ui": {
+    "selectable": true,
+    "locked": false,
+    "warnText": null
+  },
+
+  "requiredScopes": [ "DeviceManagementConfiguration.ReadWrite.All" ],
+
+  "naming": { "prefix": "4S-", "policyName": "4S-Defender-AV-Realtime" },
+  "profileGroup": { "id": "defender-av", "policyName": "4S-Defender-AV-Baseline", "title": "Defender Antivirus - Baseline" },
+
+  "graph": {
+    "resource": "/deviceManagement/configurationPolicies",
+    "matchBy": "name",
+    "createBody": {
+      "name": "{{policyName}}",
+      "description": "Erstellt durch 4sight Hardening Generator ({{timestamp}}) - Checkliste B-08 (Echtzeitschutz).",
+      "platforms": "windows10",
+      "technologies": "mdm,microsoftSense",
+      "roleScopeTagIds": [ "0" ],
+      "settings": [
+        {
+          "@odata.type": "#microsoft.graph.deviceManagementConfigurationSetting",
+          "settingInstance": {
+            "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+            "settingDefinitionId": "device_vendor_msft_policy_config_defender_allowrealtimemonitoring",
+            "choiceSettingValue": {
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingValue",
+              "value": "device_vendor_msft_policy_config_defender_allowrealtimemonitoring_1",
+              "children": []
+            }
+          }
+        }
+      ]
+    },
+    "readback": {
+      "settingDefinitionId": "device_vendor_msft_policy_config_defender_allowrealtimemonitoring",
+      "desiredValue": "device_vendor_msft_policy_config_defender_allowrealtimemonitoring_1",
+      "valueMeaning": {
+        "device_vendor_msft_policy_config_defender_allowrealtimemonitoring_1": "Echtzeitschutz aktiviert",
+        "device_vendor_msft_policy_config_defender_allowrealtimemonitoring_0": "Echtzeitschutz deaktiviert"
+      }
+    }
+  },
+
+  "revert": {
+    "strategy": "restoreFromBackup",
+    "note": "Vor dem Schreiben wird ein evtl. bestehendes Profil gleichen Namens als JSON gesichert. Revert loescht das aktuelle Profil und stellt - falls vorhanden - das gesicherte wieder her."
+  },
+
+  "dependsOn": [],
+
+  "verifyInTestTenant": "settingDefinitionId und Choice-Value gegen einen Test-Tenant verifizieren (Intune > Create policy > Settings Catalog, Einstellung exportieren, oder Graph-X-Ray). 'technologies' ggf. auf 'mdm' reduzieren, falls das Endpoint-Security-AV-Backend nicht gewuenscht ist.",
+
+  "references": [
+    "Defender CSP AllowRealtimeMonitoring (0=Disabled, 1=Enabled)",
+    "Graph: deviceManagement/configurationPolicies (Settings Catalog)"
+  ]
+}

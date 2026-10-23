@@ -1,0 +1,49 @@
+{
+  "$schemaVersion": "0.1",
+  "id": "intune.defender.controlledFolderAccess",
+  "checklistNr": "B-17",
+  "workload": "Intune",
+  "category": "Attack Surface Reduction",
+  "title": "Defender: Ueberwachter Ordnerzugriff (Controlled Folder Access)",
+  "description": "Schuetzt Ordner vor unbefugten Aenderungen (Ransomware-Schutz). Wird im sicheren Modus zunaechst im AUDIT-Modus erzeugt.",
+  "tier": "Optional",
+  "riskClass": "B",
+  "riskRationale": "Im Block-Modus kann CFA legitime Anwendungen am Schreiben hindern (betriebskritisch). Darum nur Audit-Modus erzeugbar.",
+  "safeMode": { "assignment": "unassigned", "mode": "audit", "note": "Erzeugt im Audit-Modus und unassigned. Umschalten auf Block ist ein bewusster, manueller Schritt nach Test." },
+  "ui": { "selectable": true, "locked": false, "warnText": "Betriebskritisch: wird nur im Audit-Modus erzeugt. 'Block' und Zuweisung bewusst manuell nach Test (Ausnahmen fuer Fachanwendungen pruefen)." },
+  "requiredScopes": [ "DeviceManagementConfiguration.ReadWrite.All" ],
+  "naming": { "prefix": "4S-", "policyName": "4S-Defender-ControlledFolderAccess-Audit" },
+  "graph": {
+    "resource": "/deviceManagement/configurationPolicies",
+    "matchBy": "name",
+    "createBody": {
+      "name": "{{policyName}}",
+      "description": "Erstellt durch 4sight Hardening Generator ({{timestamp}}) - B-17 (Controlled Folder Access, AUDIT).",
+      "platforms": "windows10",
+      "technologies": "mdm,microsoftSense",
+      "roleScopeTagIds": [ "0" ],
+      "settings": [
+        { "@odata.type": "#microsoft.graph.deviceManagementConfigurationSetting",
+          "settingInstance": {
+            "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+            "settingDefinitionId": "device_vendor_msft_policy_config_defender_enablecontrolledfolderaccess",
+            "choiceSettingValue": {
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingValue",
+              "value": "device_vendor_msft_policy_config_defender_enablecontrolledfolderaccess_2",
+              "children": [] } } }
+      ]
+    },
+    "readback": {
+      "settingDefinitionId": "device_vendor_msft_policy_config_defender_enablecontrolledfolderaccess",
+      "desiredValue": "device_vendor_msft_policy_config_defender_enablecontrolledfolderaccess_2",
+      "valueMeaning": {
+        "device_vendor_msft_policy_config_defender_enablecontrolledfolderaccess_0": "Deaktiviert",
+        "device_vendor_msft_policy_config_defender_enablecontrolledfolderaccess_1": "Block (scharf)",
+        "device_vendor_msft_policy_config_defender_enablecontrolledfolderaccess_2": "Audit"
+      }
+    }
+  },
+  "revert": { "strategy": "restoreFromBackup", "note": "Backup vor Aenderung; Revert stellt Vorzustand wieder her bzw. loescht das angelegte Profil." },
+  "verifyInTestTenant": "settingDefinitionId/Choice-Value (EnableControlledFolderAccess: 0=aus,1=Block,2=Audit) im Test-Tenant verifizieren.",
+  "references": [ "Defender CSP EnableControlledFolderAccess" ]
+}

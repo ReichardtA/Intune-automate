@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>HardeningGenerator</RootNamespace>
+    <AssemblyName>HardeningGenerator</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Katalog wird neben die EXE kopiert und zur Laufzeit geladen.
+         'Update' statt 'Include': der SDK inkludiert die Dateien bereits als None. -->
+    <None Update="catalog\**\*.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

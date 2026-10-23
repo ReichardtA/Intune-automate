@@ -1,0 +1,64 @@
+{
+  "$schemaVersion": "0.1",
+  "id": "intune.defender.av.behaviorMonitoring",
+  "checklistNr": "B-11",
+  "workload": "Intune",
+  "category": "Antivirus",
+  "title": "Defender Antivirus: Verhaltensueberwachung aktivieren",
+  "description": "Aktiviert die Verhaltensueberwachung (Behavior Monitoring) von Microsoft Defender Antivirus ueber ein Intune Settings-Catalog-Profil.",
+  "tier": "Pflicht",
+
+  "riskClass": "A",
+  "riskRationale": "Verhaltensueberwachung erkennt dateilose/verhaltensbasierte Angriffe und sperrt niemanden aus.",
+
+  "safeMode": {
+    "assignment": "unassigned",
+    "note": "Profil wird ohne Zuweisung erzeugt. Rollout erfolgt bewusst manuell."
+  },
+
+  "ui": { "selectable": true, "locked": false, "warnText": null },
+
+  "requiredScopes": [ "DeviceManagementConfiguration.ReadWrite.All" ],
+
+  "naming": { "prefix": "4S-", "policyName": "4S-Defender-AV-BehaviorMonitoring" },
+  "profileGroup": { "id": "defender-av", "policyName": "4S-Defender-AV-Baseline", "title": "Defender Antivirus - Baseline" },
+
+  "graph": {
+    "resource": "/deviceManagement/configurationPolicies",
+    "matchBy": "name",
+    "createBody": {
+      "name": "{{policyName}}",
+      "description": "Erstellt durch 4sight Hardening Generator ({{timestamp}}) - Checkliste B-11 (Verhaltensueberwachung).",
+      "platforms": "windows10",
+      "technologies": "mdm,microsoftSense",
+      "roleScopeTagIds": [ "0" ],
+      "settings": [
+        {
+          "@odata.type": "#microsoft.graph.deviceManagementConfigurationSetting",
+          "settingInstance": {
+            "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+            "settingDefinitionId": "device_vendor_msft_policy_config_defender_allowbehaviormonitoring",
+            "choiceSettingValue": {
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingValue",
+              "value": "device_vendor_msft_policy_config_defender_allowbehaviormonitoring_1",
+              "children": []
+            }
+          }
+        }
+      ]
+    },
+    "readback": {
+      "settingDefinitionId": "device_vendor_msft_policy_config_defender_allowbehaviormonitoring",
+      "desiredValue": "device_vendor_msft_policy_config_defender_allowbehaviormonitoring_1",
+      "valueMeaning": {
+        "device_vendor_msft_policy_config_defender_allowbehaviormonitoring_1": "Verhaltensueberwachung aktiviert",
+        "device_vendor_msft_policy_config_defender_allowbehaviormonitoring_0": "Verhaltensueberwachung deaktiviert"
+      }
+    }
+  },
+
+  "revert": { "strategy": "restoreFromBackup", "note": "Backup vor Aenderung; Revert stellt Vorzustand wieder her bzw. loescht das angelegte Profil." },
+  "dependsOn": [],
+  "verifyInTestTenant": "settingDefinitionId/Choice-Value im Test-Tenant verifizieren.",
+  "references": [ "Defender CSP AllowBehaviorMonitoring (0=aus,1=an)" ]
+}

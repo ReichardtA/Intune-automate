@@ -1,0 +1,64 @@
+{
+  "$schemaVersion": "0.1",
+  "id": "intune.defender.av.cloudProtection",
+  "checklistNr": "B-09",
+  "workload": "Intune",
+  "category": "Antivirus",
+  "title": "Defender Antivirus: Cloud-Schutz aktivieren",
+  "description": "Aktiviert den cloudbasierten Schutz (MAPS) von Microsoft Defender Antivirus ueber ein Intune Settings-Catalog-Profil.",
+  "tier": "Best Practice",
+
+  "riskClass": "A",
+  "riskRationale": "Cloud-Schutz zu aktivieren sperrt niemanden aus und stoert den Betrieb nicht.",
+
+  "safeMode": {
+    "assignment": "unassigned",
+    "note": "Profil wird ohne Zuweisung erzeugt. Rollout erfolgt bewusst manuell."
+  },
+
+  "ui": { "selectable": true, "locked": false, "warnText": null },
+
+  "requiredScopes": [ "DeviceManagementConfiguration.ReadWrite.All" ],
+
+  "naming": { "prefix": "4S-", "policyName": "4S-Defender-AV-CloudProtection" },
+  "profileGroup": { "id": "defender-av", "policyName": "4S-Defender-AV-Baseline", "title": "Defender Antivirus - Baseline" },
+
+  "graph": {
+    "resource": "/deviceManagement/configurationPolicies",
+    "matchBy": "name",
+    "createBody": {
+      "name": "{{policyName}}",
+      "description": "Erstellt durch 4sight Hardening Generator ({{timestamp}}) - Checkliste B-09 (Cloud-Schutz).",
+      "platforms": "windows10",
+      "technologies": "mdm,microsoftSense",
+      "roleScopeTagIds": [ "0" ],
+      "settings": [
+        {
+          "@odata.type": "#microsoft.graph.deviceManagementConfigurationSetting",
+          "settingInstance": {
+            "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+            "settingDefinitionId": "device_vendor_msft_policy_config_defender_allowcloudprotection",
+            "choiceSettingValue": {
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingValue",
+              "value": "device_vendor_msft_policy_config_defender_allowcloudprotection_1",
+              "children": []
+            }
+          }
+        }
+      ]
+    },
+    "readback": {
+      "settingDefinitionId": "device_vendor_msft_policy_config_defender_allowcloudprotection",
+      "desiredValue": "device_vendor_msft_policy_config_defender_allowcloudprotection_1",
+      "valueMeaning": {
+        "device_vendor_msft_policy_config_defender_allowcloudprotection_1": "Cloud-Schutz aktiviert",
+        "device_vendor_msft_policy_config_defender_allowcloudprotection_0": "Cloud-Schutz deaktiviert"
+      }
+    }
+  },
+
+  "revert": { "strategy": "restoreFromBackup", "note": "Backup vor Aenderung; Revert stellt Vorzustand wieder her bzw. loescht das angelegte Profil." },
+  "dependsOn": [],
+  "verifyInTestTenant": "settingDefinitionId/Choice-Value im Test-Tenant verifizieren. Hinweis: die Cloud-Blockierebene (CloudBlockLevel=Hoch) ist bewusst NICHT enthalten und folgt als eigener Eintrag nach Verifikation.",
+  "references": [ "Defender CSP AllowCloudProtection (0=aus,1=an)" ]
+}
