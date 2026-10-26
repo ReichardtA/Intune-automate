@@ -44,6 +44,9 @@ public class UiInfo
     public bool Selectable { get; set; } = true;
     public bool Locked { get; set; }
     public string? WarnText { get; set; }
+
+    /// <summary>Unterpunkte (aus graph.readbacks) einzeln waehlbar, z. B. die ASR-Regeln von B-16.</summary>
+    public bool SubSelectable { get; set; }
 }
 
 public class NamingInfo
@@ -68,10 +71,15 @@ public class GraphInfo
     public JsonElement CreateBody { get; set; }
 
     public ReadbackInfo? Readback { get; set; }
+
+    /// <summary>Optional: mehrere Checks fuer EIN Setting (z. B. ASR-Regeln). Ersetzt Readback, wenn gesetzt.</summary>
+    public ReadbackInfo[]? Readbacks { get; set; }
 }
 
 public class ReadbackInfo
 {
+    /// <summary>Anzeigename des Checks (nur bei Readbacks relevant).</summary>
+    public string? Title { get; set; }
     public string? SettingDefinitionId { get; set; }
     public string? DesiredValue { get; set; }
 }

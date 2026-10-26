@@ -5,6 +5,8 @@
         WindowStartupLocation="CenterScreen" FontFamily="Segoe UI" FontSize="13">
 
     <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+
         <!-- Zeilenfarbe nach Risikoklasse -->
         <Style x:Key="RiskRowStyle" TargetType="ListViewItem">
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -63,17 +65,41 @@
                     <GridViewColumn Header="" Width="44">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <CheckBox HorizontalAlignment="Center"
+                                <!-- Bei Unterpunkten: Haken = alle, Kaestchen gefuellt = teilweise -->
+                                <CheckBox HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,2,0,0"
                                           IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                           IsEnabled="{Binding CanSelect}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
                     <GridViewColumn Header="Nr." Width="60" DisplayMemberBinding="{Binding Nr}" />
-                    <GridViewColumn Header="Einstellung" Width="300" DisplayMemberBinding="{Binding Title}" />
+                    <GridViewColumn Header="Einstellung" Width="380">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Title}" TextWrapping="Wrap" />
+                                    <!-- Nur bei Eintraegen mit Unterpunkten (z. B. B-16 ASR-Regeln) -->
+                                    <Expander Header="{Binding SubSummary}" Margin="0,4,0,2" Foreground="#1F3864"
+                                              Visibility="{Binding HasSubItems, Converter={StaticResource BoolToVis}}"
+                                              IsEnabled="{Binding CanSelect}">
+                                        <ItemsControl ItemsSource="{Binding SubItems}" Margin="18,4,0,0">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <CheckBox Margin="0,2" ToolTip="{Binding DefId}"
+                                                              IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                        <TextBlock Text="{Binding Title}" TextWrapping="Wrap" Foreground="#333333" />
+                                                    </CheckBox>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </Expander>
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                     <GridViewColumn Header="Tier" Width="100" DisplayMemberBinding="{Binding Tier}" />
                     <GridViewColumn Header="Risiko" Width="120" DisplayMemberBinding="{Binding RiskLabel}" />
-                    <GridViewColumn Header="Hinweis" Width="330">
+                    <GridViewColumn Header="Hinweis" Width="280">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Hint}" TextWrapping="Wrap" Foreground="#9C5700" />

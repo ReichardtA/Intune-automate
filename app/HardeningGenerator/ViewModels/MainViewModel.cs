@@ -44,7 +44,12 @@ public class MainViewModel : INotifyPropertyChanged
             StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
     public List<CatalogEntry> SelectedEntries() =>
-        Settings.Where(s => s.IsSelected && s.CanSelect).Select(s => s.Entry).ToList();
+        Settings.Where(s => s.IsIncluded).Select(s => s.Entry).ToList();
+
+    /// <summary>Teilauswahl je Eintrag mit Unterpunkten (Eintrags-Id -> gewaehlte settingDefinitionIds).</summary>
+    public Dictionary<string, HashSet<string>> SubSelection() =>
+        Settings.Where(s => s.IsIncluded && s.HasSubItems)
+                .ToDictionary(s => s.Entry.Id, s => s.SelectedSubDefIds!);
 
     public event PropertyChangedEventHandler? PropertyChanged;
     private void OnPropertyChanged([CallerMemberName] string? name = null)

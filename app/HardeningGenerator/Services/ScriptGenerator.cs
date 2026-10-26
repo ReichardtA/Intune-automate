@@ -15,11 +15,17 @@ public static class ScriptGenerator
 {
     private const string GraphBase = "https://graph.microsoft.com/beta";
 
-    public static string Generate(IEnumerable<CatalogEntry> selected, IEnumerable<string> breakGlass)
+    /// <param name="subSelection">Optional: je Eintrags-Id die gewaehlten Unterpunkte (settingDefinitionIds aus
+    /// graph.readbacks). Fehlt ein Eintrag hier, gilt er als vollstaendig gewaehlt. Leere Menge = nicht erzeugen.</param>
+    public static string Generate(IEnumerable<CatalogEntry> selected, IEnumerable<string> breakGlass,
+        IReadOnlyDictionary<string, HashSet<string>>? subSelection = null)
     {
+        _sub = subSelection;
+
         // Sicherheitsnetz: niemals Klasse C oder gesperrte Eintraege erzeugen
         var entries = selected
-            .Where(e => !e.Ui.Locked && !string.Equals(e.RiskClass, "C", StringComparison.OrdinalIgnoreCase))
+            .Where(e => !e.Ui.Locked && e.Ui.Selectable && !string.Equals(e.RiskClass, "C", StringComparison.OrdinalIgnoreCase))
+            .Where(e => SelectedReadbacks(e).Length > 0 || !IsPartial(e))
             .ToList();
 
         var ts = DateTime.Now.ToString("yyyy-MM-dd HH:mm");
@@ -60,7 +66,7 @@ public static class ScriptGenerator
         {
             var f = g[0];
             var pn = ProfileName(f);
-            sb.AppendLine($"     - {pn}: {string.Join(", ", g.Select(x => x.ChecklistNr))}");
+            sb.AppendLine($"     - {pn}: {string.Join(", ", g.Select(NrWithCount))}");
         }
         sb.AppendLine("  ---------------------------------------------------------------------");
         sb.AppendLine("  HINWEISE:");
@@ -105,9 +111,18 @@ public static class ScriptGenerator
             sb.AppendLine("    Checks     = @(");
             foreach (var e in g)
             {
-                var defId = e.Graph.Readback?.SettingDefinitionId ?? "";
-                var desired = e.Graph.Readback?.DesiredValue ?? "";
-                sb.AppendLine($"      [pscustomobject]@{{ Nr = {SingleQuote(e.ChecklistNr)}; Title = {SingleQuote(e.Title)}; ReadbackDef = {SingleQuote(defId)}; DesiredValue = {SingleQuote(desired)} }}");
+                // Readbacks (mehrere Checks, z. B. ASR-Regeln) ersetzt den einzelnen Readback;
+                // bei Teilauswahl nur die gewaehlten Unterpunkte
+                var checks = (e.Graph.Readbacks != null && e.Graph.Readbacks.Length > 0)
+                    ? SelectedReadbacks(e)
+                    : new[] { e.Graph.Readback ?? new ReadbackInfo() };
+                foreach (var rb in checks)
+                {
+                    var defId = rb.SettingDefinitionId ?? "";
+                    var desired = rb.DesiredValue ?? "";
+                    var checkTitle = string.IsNullOrWhiteSpace(rb.Title) ? e.Title : rb.Title!;
+                    sb.AppendLine($"      [pscustomobject]@{{ Nr = {SingleQuote(e.ChecklistNr)}; Title = {SingleQuote(checkTitle)}; ReadbackDef = {SingleQuote(defId)}; DesiredValue = {SingleQuote(desired)} }}");
+                }
             }
             sb.AppendLine("    )");
             sb.AppendLine("    BodyJson   = @'");
@@ -141,6 +156,18 @@ public static class ScriptGenerator
         foreach (var e in group)
         {
             var eb = JsonNode.Parse(e.Graph.CreateBody.GetRawText())!.AsObject();
+            if (IsPartial(e))
+            {
+                // Nicht gewaehlte Unterpunkte aus dem Payload entfernen (= "nicht konfiguriert",
+                // NICHT "Aus" - damit werden Werte aus anderen Kundenprofilen nicht ueberschrieben)
+                var keep = SelectedReadbacks(e).Select(r => r.SettingDefinitionId!).ToHashSet(StringComparer.OrdinalIgnoreCase);
+                var remove = e.Graph.Readbacks!
+                    .Select(r => r.SettingDefinitionId)
+                    .Where(id => !string.IsNullOrWhiteSpace(id) && !keep.Contains(id!))
+                    .Select(id => id!)
+                    .ToHashSet(StringComparer.OrdinalIgnoreCase);
+                RemoveInstances(eb, remove);
+            }
             if (eb["settings"] is JsonArray arr)
             {
                 foreach (var node in arr)
@@ -157,6 +184,50 @@ public static class ScriptGenerator
 
         var json = bodyObj.ToJsonString(new JsonSerializerOptions { WriteIndented = true });
         return json.Replace("{{policyName}}", policyName).Replace("{{timestamp}}", ts);
+    }
+
+    // Teilauswahl des aktuellen Generate-Laufs (nur waehrend Generate gesetzt; App ist single-threaded)
+    private static IReadOnlyDictionary<string, HashSet<string>>? _sub;
+
+    /// <summary>True, wenn fuer diesen Eintrag nur ein Teil der Unterpunkte gewaehlt ist.</summary>
+    private static bool IsPartial(CatalogEntry e) =>
+        e.Ui.SubSelectable && e.Graph.Readbacks is { Length: > 0 }
+        && _sub != null && _sub.TryGetValue(e.Id, out var set)
+        && e.Graph.Readbacks.Any(r => !set.Contains(r.SettingDefinitionId ?? ""));
+
+    /// <summary>Gewaehlte Readbacks (alle, wenn keine Teilauswahl).</summary>
+    private static ReadbackInfo[] SelectedReadbacks(CatalogEntry e)
+    {
+        var all = e.Graph.Readbacks ?? Array.Empty<ReadbackInfo>();
+        if (!IsPartial(e)) return all;
+        var set = _sub![e.Id];
+        return all.Where(r => set.Contains(r.SettingDefinitionId ?? "")).ToArray();
+    }
+
+    private static string NrWithCount(CatalogEntry e) =>
+        IsPartial(e) ? $"{e.ChecklistNr} ({SelectedReadbacks(e).Length}/{e.Graph.Readbacks!.Length})" : e.ChecklistNr;
+
+    /// <summary>Entfernt rekursiv alle Setting-Instanzen mit einer der angegebenen settingDefinitionIds.</summary>
+    private static void RemoveInstances(JsonNode? node, HashSet<string> remove)
+    {
+        switch (node)
+        {
+            case JsonObject o:
+                foreach (var kv in o.ToList()) RemoveInstances(kv.Value, remove);
+                break;
+            case JsonArray a:
+                for (int i = a.Count - 1; i >= 0; i--)
+                {
+                    if (a[i] is JsonObject child
+                        && child["settingDefinitionId"] is JsonValue v
+                        && v.TryGetValue<string>(out var id)
+                        && remove.Contains(id))
+                        a.RemoveAt(i);
+                    else
+                        RemoveInstances(a[i], remove);
+                }
+                break;
+        }
     }
 
     private static string SingleQuote(string s) => "'" + (s ?? "").Replace("'", "''") + "'";
@@ -193,11 +264,34 @@ function Get-PolicyWithSettings { param($Resource,$Id)
     $p | Add-Member -NotePropertyName settings -NotePropertyValue $settings -Force
     return $p
 }
+# Sammelt rekursiv ALLE Choice-Werte eines settingInstance-Baums (auch verschachtelt:
+# choice.children, groupSettingCollectionValue[].children, groupSettingValue.children).
+# Noetig fuer ASR/Firewall/BitLocker, deren Werte nicht auf oberster Ebene liegen.
+function Add-ChoiceValues { param($Inst,$Acc)
+    if ($null -eq $Inst) { return }
+    if ($Inst.choiceSettingValue) {
+        [void]$Acc.Add([pscustomobject]@{ DefId = $Inst.settingDefinitionId; Value = $Inst.choiceSettingValue.value })
+        foreach ($ch in @($Inst.choiceSettingValue.children)) { Add-ChoiceValues $ch $Acc }
+    }
+    if ($Inst.groupSettingCollectionValue) {
+        foreach ($g in @($Inst.groupSettingCollectionValue)) {
+            if ($null -eq $g) { continue }
+            foreach ($ch in @($g.children)) { Add-ChoiceValues $ch $Acc }
+        }
+    }
+    if ($Inst.groupSettingValue) {
+        foreach ($ch in @($Inst.groupSettingValue.children)) { Add-ChoiceValues $ch $Acc }
+    }
+}
+function Get-ChoiceValues { param($Inst)
+    $acc = New-Object System.Collections.Generic.List[object]
+    Add-ChoiceValues $Inst $acc
+    return $acc.ToArray()
+}
 function Get-SettingValueFromPolicy { param($Pol,$DefId)
     foreach ($s in @($Pol.settings)) {
-        $inst = $s.settingInstance
-        if ($inst -and $inst.settingDefinitionId -eq $DefId -and $inst.choiceSettingValue) {
-            return $inst.choiceSettingValue.value
+        foreach ($cv in @(Get-ChoiceValues $s.settingInstance)) {
+            if ($cv.DefId -eq $DefId) { return $cv.Value }
         }
     }
     return $null
@@ -217,11 +311,10 @@ function Get-ConfigPolicyIndex { param($Resource)
     foreach ($p in $pols) {
         try { $s = Invoke-MgGraphRequest -Method GET -Uri "$Resource/$($p.id)/settings" -OutputType PSObject } catch { continue }
         foreach ($si in @($s.value)) {
-            $inst = $si.settingInstance
-            if ($inst -and $inst.settingDefinitionId -and $inst.choiceSettingValue) {
-                $def = $inst.settingDefinitionId
-                if (-not $index.ContainsKey($def)) { $index[$def] = @() }
-                $index[$def] += [pscustomobject]@{ Name = $p.name; Value = $inst.choiceSettingValue.value }
+            foreach ($cv in @(Get-ChoiceValues $si.settingInstance)) {
+                if (-not $cv.DefId) { continue }
+                if (-not $index.ContainsKey($cv.DefId)) { $index[$cv.DefId] = @() }
+                $index[$cv.DefId] += [pscustomobject]@{ Name = $p.name; Value = $cv.Value }
             }
         }
     }

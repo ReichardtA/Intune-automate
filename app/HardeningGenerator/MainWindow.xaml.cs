@@ -53,7 +53,7 @@ public partial class MainWindow : Window
             return;
         }
 
-        var script = ScriptGenerator.Generate(selected, _vm.BreakGlassList);
+        var script = ScriptGenerator.Generate(selected, _vm.BreakGlassList, _vm.SubSelection());
 
         var dlg = new SaveFileDialog
         {

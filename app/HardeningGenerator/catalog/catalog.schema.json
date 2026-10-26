@@ -37,7 +37,8 @@
       "properties": {
         "selectable": { "type": "boolean" },
         "locked":     { "type": "boolean" },
-        "warnText":   { "type": ["string", "null"] }
+        "warnText":   { "type": ["string", "null"] },
+        "subSelectable": { "type": "boolean", "description": "Optional. true = die Eintraege aus graph.readbacks erscheinen als einzeln ankreuzbare Unterpunkte (Hauptpunkt = alle). Nicht gewaehlte Unterpunkte werden aus dem Payload entfernt (nicht konfiguriert, nicht 'Aus')." }
       }
     },
 
@@ -73,11 +74,25 @@
         "createBody": { "type": "object", "description": "Parametrisierter Payload. Platzhalter {{policyName}}, {{timestamp}}." },
         "readback": {
           "type": "object",
-          "description": "Wie der Ist-Wert fuer die read-only-Vorschau gelesen und bewertet wird.",
+          "description": "Wie der Ist-Wert fuer die read-only-Vorschau gelesen und bewertet wird (EIN Check je Eintrag). Die settingDefinitionId darf auch eine verschachtelte Kind-Einstellung sein (z. B. eine ASR-Regel innerhalb einer Gruppen-Sammlung) - das erzeugte Skript sucht rekursiv.",
           "properties": {
             "settingDefinitionId": { "type": "string" },
             "desiredValue":        { "type": "string" },
             "valueMeaning":        { "type": "object" }
+          }
+        },
+        "readbacks": {
+          "type": "array",
+          "description": "Alternative zu 'readback' fuer Eintraege mit MEHREREN pruefbaren Werten in einem Setting (z. B. ASR: eine Gruppen-Sammlung, je Regel ein Kind). Ist 'readbacks' gesetzt, ersetzt es 'readback'; jeder Eintrag wird zu einem eigenen Check in Preview/-SkipSatisfied.",
+          "items": {
+            "type": "object",
+            "required": ["settingDefinitionId", "desiredValue"],
+            "properties": {
+              "title":               { "type": "string", "description": "Anzeigename des Checks (z. B. Name der ASR-Regel). Fehlt er, wird der Eintragstitel verwendet." },
+              "settingDefinitionId": { "type": "string" },
+              "desiredValue":        { "type": "string" },
+              "valueMeaning":        { "type": "object" }
+            }
           }
         }
       }

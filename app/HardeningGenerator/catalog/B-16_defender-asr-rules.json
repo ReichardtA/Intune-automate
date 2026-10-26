@@ -1,0 +1,451 @@
+{
+  "$schemaVersion": "0.1",
+  "id": "intune.defender.asrRules",
+  "checklistNr": "B-16",
+  "workload": "Intune",
+  "category": "Antivirus",
+  "title": "Defender: Regeln zur Verringerung der Angriffsflaeche (ASR)",
+  "description": "Aktiviert alle 19 ASR-Regeln von Microsoft Defender in einem Settings-Catalog-Profil. Im sicheren Modus ausschliesslich im AUDIT-Modus (protokolliert, blockiert nicht).",
+  "tier": "Best Practice",
+  "riskClass": "B",
+  "riskRationale": "ASR-Regeln im Block-Modus koennen legitime Anwendungen, Makros, Skripte oder Verwaltungstools stoeren (z. B. PSExec/WMI-Regel ist mit ConfigMgr unvertraeglich). Darum nur Audit erzeugbar; Umstellung auf Block regelweise nach Auswertung der Audit-Ereignisse.",
+  "safeMode": {
+    "assignment": "unassigned",
+    "mode": "audit",
+    "note": "Erzeugt alle Regeln im Audit-Modus und ohne Zuweisung. Keine Ausschluesse - die sind kundenspezifisch und werden nach Auswertung manuell gepflegt."
+  },
+  "ui": {
+    "selectable": true,
+    "locked": false,
+    "subSelectable": true,
+    "warnText": "Betriebskritisch: wird nur im Audit-Modus erzeugt. Block je Regel und Zuweisung bewusst manuell nach Auswertung (Defender-Portal > Berichte > Verringerung der Angriffsflaeche)."
+  },
+  "requiredScopes": [
+    "DeviceManagementConfiguration.ReadWrite.All"
+  ],
+  "naming": {
+    "prefix": "4S-",
+    "policyName": "4S-Defender-ASR-Audit"
+  },
+  "graph": {
+    "resource": "/deviceManagement/configurationPolicies",
+    "matchBy": "name",
+    "createBody": {
+      "name": "{{policyName}}",
+      "description": "Erstellt durch 4sight Hardening Generator ({{timestamp}}) - Checkliste B-16 (ASR-Regeln, AUDIT).",
+      "platforms": "windows10",
+      "technologies": "mdm",
+      "roleScopeTagIds": [
+        "0"
+      ],
+      "settings": [
+        {
+          "@odata.type": "#microsoft.graph.deviceManagementConfigurationSetting",
+          "settingInstance": {
+            "@odata.type": "#microsoft.graph.deviceManagementConfigurationGroupSettingCollectionInstance",
+            "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules",
+            "groupSettingCollectionValue": [
+              {
+                "@odata.type": "#microsoft.graph.deviceManagementConfigurationGroupSettingValue",
+                "children": [
+                  {
+                    "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+                    "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockexecutablecontentfromemailclientandwebmail",
+                    "choiceSettingValue": {
+                      "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingValue",
+                      "value": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockexecutablecontentfromemailclientandwebmail_audit",
+                      "children": []
+                    }
+                  },
+                  {
+                    "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+                    "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockexecutablefilesrunningunlesstheymeetprevalenceagetrustedlistcriterion",
+                    "choiceSettingValue": {
+                      "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingValue",
+                      "value": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockexecutablefilesrunningunlesstheymeetprevalenceagetrustedlistcriterion_audit",
+                      "children": []
+                    }
+                  },
+                  {
+                    "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+                    "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockexecutionofpotentiallyobfuscatedscripts",
+                    "choiceSettingValue": {
+                      "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingValue",
+                      "value": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockexecutionofpotentiallyobfuscatedscripts_audit",
+                      "children": []
+                    }
+                  },
+                  {
+                    "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+                    "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockcredentialstealingfromwindowslocalsecurityauthoritysubsystem",
+                    "choiceSettingValue": {
+                      "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingValue",
+                      "value": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockcredentialstealingfromwindowslocalsecurityauthoritysubsystem_audit",
+                      "children": []
+                    }
+                  },
+                  {
+                    "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+                    "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockofficeapplicationsfrominjectingcodeintootherprocesses",
+                    "choiceSettingValue": {
+                      "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingValue",
+                      "value": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockofficeapplicationsfrominjectingcodeintootherprocesses_audit",
+                      "children": []
+                    }
+                  },
+                  {
+                    "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+                    "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockofficeapplicationsfromcreatingexecutablecontent",
+                    "choiceSettingValue": {
+                      "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingValue",
+                      "value": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockofficeapplicationsfromcreatingexecutablecontent_audit",
+                      "children": []
+                    }
+                  },
+                  {
+                    "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+                    "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockadobereaderfromcreatingchildprocesses",
+                    "choiceSettingValue": {
+                      "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingValue",
+                      "value": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockadobereaderfromcreatingchildprocesses_audit",
+                      "children": []
+                    }
+                  },
+                  {
+                    "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+                    "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockofficecommunicationappfromcreatingchildprocesses",
+                    "choiceSettingValue": {
+                      "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingValue",
+                      "value": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockofficecommunicationappfromcreatingchildprocesses_audit",
+                      "children": []
+                    }
+                  },
+                  {
+                    "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+                    "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockallofficeapplicationsfromcreatingchildprocesses",
+                    "choiceSettingValue": {
+                      "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingValue",
+                      "value": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockallofficeapplicationsfromcreatingchildprocesses_audit",
+                      "children": []
+                    }
+                  },
+                  {
+                    "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+                    "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockprocesscreationsfrompsexecandwmicommands",
+                    "choiceSettingValue": {
+                      "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingValue",
+                      "value": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockprocesscreationsfrompsexecandwmicommands_audit",
+                      "children": []
+                    }
+                  },
+                  {
+                    "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+                    "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_useadvancedprotectionagainstransomware",
+                    "choiceSettingValue": {
+                      "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingValue",
+                      "value": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_useadvancedprotectionagainstransomware_audit",
+                      "children": []
+                    }
+                  },
+                  {
+                    "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+                    "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockabuseofexploitedvulnerablesigneddrivers",
+                    "choiceSettingValue": {
+                      "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingValue",
+                      "value": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockabuseofexploitedvulnerablesigneddrivers_audit",
+                      "children": []
+                    }
+                  },
+                  {
+                    "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+                    "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockrebootingmachineinsafemode",
+                    "choiceSettingValue": {
+                      "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingValue",
+                      "value": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockrebootingmachineinsafemode_audit",
+                      "children": []
+                    }
+                  },
+                  {
+                    "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+                    "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockuntrustedunsignedprocessesthatrunfromusb",
+                    "choiceSettingValue": {
+                      "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingValue",
+                      "value": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockuntrustedunsignedprocessesthatrunfromusb_audit",
+                      "children": []
+                    }
+                  },
+                  {
+                    "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+                    "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockpersistencethroughwmieventsubscription",
+                    "choiceSettingValue": {
+                      "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingValue",
+                      "value": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockpersistencethroughwmieventsubscription_audit",
+                      "children": []
+                    }
+                  },
+                  {
+                    "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+                    "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockjavascriptorvbscriptfromlaunchingdownloadedexecutablecontent",
+                    "choiceSettingValue": {
+                      "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingValue",
+                      "value": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockjavascriptorvbscriptfromlaunchingdownloadedexecutablecontent_audit",
+                      "children": []
+                    }
+                  },
+                  {
+                    "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+                    "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockuseofcopiedorimpersonatedsystemtools",
+                    "choiceSettingValue": {
+                      "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingValue",
+                      "value": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockuseofcopiedorimpersonatedsystemtools_audit",
+                      "children": []
+                    }
+                  },
+                  {
+                    "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+                    "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockwebshellcreationforservers",
+                    "choiceSettingValue": {
+                      "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingValue",
+                      "value": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockwebshellcreationforservers_audit",
+                      "children": []
+                    }
+                  },
+                  {
+                    "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+                    "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockwin32apicallsfromofficemacros",
+                    "choiceSettingValue": {
+                      "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingValue",
+                      "value": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockwin32apicallsfromofficemacros_audit",
+                      "children": []
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "readbacks": [
+      {
+        "title": "Ausfuehrbare Inhalte aus E-Mail-Client und Webmail blockieren",
+        "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockexecutablecontentfromemailclientandwebmail",
+        "desiredValue": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockexecutablecontentfromemailclientandwebmail_audit",
+        "valueMeaning": {
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockexecutablecontentfromemailclientandwebmail_off": "Aus",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockexecutablecontentfromemailclientandwebmail_block": "Blockieren (scharf)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockexecutablecontentfromemailclientandwebmail_audit": "Ueberwachen (Audit)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockexecutablecontentfromemailclientandwebmail_warn": "Warnen"
+        }
+      },
+      {
+        "title": "Ausfuehrbare Dateien nur bei Verbreitungs-/Alters-/Vertrauenskriterien zulassen",
+        "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockexecutablefilesrunningunlesstheymeetprevalenceagetrustedlistcriterion",
+        "desiredValue": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockexecutablefilesrunningunlesstheymeetprevalenceagetrustedlistcriterion_audit",
+        "valueMeaning": {
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockexecutablefilesrunningunlesstheymeetprevalenceagetrustedlistcriterion_off": "Aus",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockexecutablefilesrunningunlesstheymeetprevalenceagetrustedlistcriterion_block": "Blockieren (scharf)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockexecutablefilesrunningunlesstheymeetprevalenceagetrustedlistcriterion_audit": "Ueberwachen (Audit)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockexecutablefilesrunningunlesstheymeetprevalenceagetrustedlistcriterion_warn": "Warnen"
+        }
+      },
+      {
+        "title": "Ausfuehrung potenziell verschleierter Skripts blockieren",
+        "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockexecutionofpotentiallyobfuscatedscripts",
+        "desiredValue": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockexecutionofpotentiallyobfuscatedscripts_audit",
+        "valueMeaning": {
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockexecutionofpotentiallyobfuscatedscripts_off": "Aus",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockexecutionofpotentiallyobfuscatedscripts_block": "Blockieren (scharf)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockexecutionofpotentiallyobfuscatedscripts_audit": "Ueberwachen (Audit)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockexecutionofpotentiallyobfuscatedscripts_warn": "Warnen"
+        }
+      },
+      {
+        "title": "Diebstahl von Anmeldeinformationen aus LSASS blockieren",
+        "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockcredentialstealingfromwindowslocalsecurityauthoritysubsystem",
+        "desiredValue": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockcredentialstealingfromwindowslocalsecurityauthoritysubsystem_audit",
+        "valueMeaning": {
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockcredentialstealingfromwindowslocalsecurityauthoritysubsystem_off": "Aus",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockcredentialstealingfromwindowslocalsecurityauthoritysubsystem_block": "Blockieren (scharf)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockcredentialstealingfromwindowslocalsecurityauthoritysubsystem_audit": "Ueberwachen (Audit)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockcredentialstealingfromwindowslocalsecurityauthoritysubsystem_warn": "Warnen"
+        }
+      },
+      {
+        "title": "Office-Anwendungen am Einschleusen von Code in andere Prozesse hindern",
+        "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockofficeapplicationsfrominjectingcodeintootherprocesses",
+        "desiredValue": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockofficeapplicationsfrominjectingcodeintootherprocesses_audit",
+        "valueMeaning": {
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockofficeapplicationsfrominjectingcodeintootherprocesses_off": "Aus",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockofficeapplicationsfrominjectingcodeintootherprocesses_block": "Blockieren (scharf)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockofficeapplicationsfrominjectingcodeintootherprocesses_audit": "Ueberwachen (Audit)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockofficeapplicationsfrominjectingcodeintootherprocesses_warn": "Warnen"
+        }
+      },
+      {
+        "title": "Erstellung ausfuehrbarer Inhalte durch Office-Anwendungen blockieren",
+        "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockofficeapplicationsfromcreatingexecutablecontent",
+        "desiredValue": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockofficeapplicationsfromcreatingexecutablecontent_audit",
+        "valueMeaning": {
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockofficeapplicationsfromcreatingexecutablecontent_off": "Aus",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockofficeapplicationsfromcreatingexecutablecontent_block": "Blockieren (scharf)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockofficeapplicationsfromcreatingexecutablecontent_audit": "Ueberwachen (Audit)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockofficeapplicationsfromcreatingexecutablecontent_warn": "Warnen"
+        }
+      },
+      {
+        "title": "Untergeordnete Prozesse durch Adobe Reader blockieren",
+        "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockadobereaderfromcreatingchildprocesses",
+        "desiredValue": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockadobereaderfromcreatingchildprocesses_audit",
+        "valueMeaning": {
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockadobereaderfromcreatingchildprocesses_off": "Aus",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockadobereaderfromcreatingchildprocesses_block": "Blockieren (scharf)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockadobereaderfromcreatingchildprocesses_audit": "Ueberwachen (Audit)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockadobereaderfromcreatingchildprocesses_warn": "Warnen"
+        }
+      },
+      {
+        "title": "Untergeordnete Prozesse durch Office-Kommunikationsanwendungen blockieren",
+        "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockofficecommunicationappfromcreatingchildprocesses",
+        "desiredValue": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockofficecommunicationappfromcreatingchildprocesses_audit",
+        "valueMeaning": {
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockofficecommunicationappfromcreatingchildprocesses_off": "Aus",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockofficecommunicationappfromcreatingchildprocesses_block": "Blockieren (scharf)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockofficecommunicationappfromcreatingchildprocesses_audit": "Ueberwachen (Audit)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockofficecommunicationappfromcreatingchildprocesses_warn": "Warnen"
+        }
+      },
+      {
+        "title": "Untergeordnete Prozesse fuer alle Office-Anwendungen blockieren",
+        "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockallofficeapplicationsfromcreatingchildprocesses",
+        "desiredValue": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockallofficeapplicationsfromcreatingchildprocesses_audit",
+        "valueMeaning": {
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockallofficeapplicationsfromcreatingchildprocesses_off": "Aus",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockallofficeapplicationsfromcreatingchildprocesses_block": "Blockieren (scharf)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockallofficeapplicationsfromcreatingchildprocesses_audit": "Ueberwachen (Audit)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockallofficeapplicationsfromcreatingchildprocesses_warn": "Warnen"
+        }
+      },
+      {
+        "title": "Prozesserstellung ueber PSExec- und WMI-Befehle blockieren",
+        "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockprocesscreationsfrompsexecandwmicommands",
+        "desiredValue": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockprocesscreationsfrompsexecandwmicommands_audit",
+        "valueMeaning": {
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockprocesscreationsfrompsexecandwmicommands_off": "Aus",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockprocesscreationsfrompsexecandwmicommands_block": "Blockieren (scharf)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockprocesscreationsfrompsexecandwmicommands_audit": "Ueberwachen (Audit)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockprocesscreationsfrompsexecandwmicommands_warn": "Warnen"
+        }
+      },
+      {
+        "title": "Erweiterten Schutz gegen Ransomware verwenden",
+        "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_useadvancedprotectionagainstransomware",
+        "desiredValue": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_useadvancedprotectionagainstransomware_audit",
+        "valueMeaning": {
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_useadvancedprotectionagainstransomware_off": "Aus",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_useadvancedprotectionagainstransomware_block": "Blockieren (scharf)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_useadvancedprotectionagainstransomware_audit": "Ueberwachen (Audit)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_useadvancedprotectionagainstransomware_warn": "Warnen"
+        }
+      },
+      {
+        "title": "Missbrauch anfaelliger signierter Treiber blockieren",
+        "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockabuseofexploitedvulnerablesigneddrivers",
+        "desiredValue": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockabuseofexploitedvulnerablesigneddrivers_audit",
+        "valueMeaning": {
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockabuseofexploitedvulnerablesigneddrivers_off": "Aus",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockabuseofexploitedvulnerablesigneddrivers_block": "Blockieren (scharf)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockabuseofexploitedvulnerablesigneddrivers_audit": "Ueberwachen (Audit)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockabuseofexploitedvulnerablesigneddrivers_warn": "Warnen"
+        }
+      },
+      {
+        "title": "Neustart im abgesicherten Modus blockieren",
+        "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockrebootingmachineinsafemode",
+        "desiredValue": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockrebootingmachineinsafemode_audit",
+        "valueMeaning": {
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockrebootingmachineinsafemode_off": "Aus",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockrebootingmachineinsafemode_block": "Blockieren (scharf)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockrebootingmachineinsafemode_audit": "Ueberwachen (Audit)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockrebootingmachineinsafemode_warn": "Warnen"
+        }
+      },
+      {
+        "title": "Nicht vertrauenswuerdige/unsignierte Prozesse von USB blockieren",
+        "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockuntrustedunsignedprocessesthatrunfromusb",
+        "desiredValue": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockuntrustedunsignedprocessesthatrunfromusb_audit",
+        "valueMeaning": {
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockuntrustedunsignedprocessesthatrunfromusb_off": "Aus",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockuntrustedunsignedprocessesthatrunfromusb_block": "Blockieren (scharf)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockuntrustedunsignedprocessesthatrunfromusb_audit": "Ueberwachen (Audit)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockuntrustedunsignedprocessesthatrunfromusb_warn": "Warnen"
+        }
+      },
+      {
+        "title": "Persistenz durch WMI-Ereignisabonnement blockieren",
+        "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockpersistencethroughwmieventsubscription",
+        "desiredValue": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockpersistencethroughwmieventsubscription_audit",
+        "valueMeaning": {
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockpersistencethroughwmieventsubscription_off": "Aus",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockpersistencethroughwmieventsubscription_block": "Blockieren (scharf)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockpersistencethroughwmieventsubscription_audit": "Ueberwachen (Audit)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockpersistencethroughwmieventsubscription_warn": "Warnen"
+        }
+      },
+      {
+        "title": "Start heruntergeladener Inhalte durch JavaScript/VBScript blockieren",
+        "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockjavascriptorvbscriptfromlaunchingdownloadedexecutablecontent",
+        "desiredValue": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockjavascriptorvbscriptfromlaunchingdownloadedexecutablecontent_audit",
+        "valueMeaning": {
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockjavascriptorvbscriptfromlaunchingdownloadedexecutablecontent_off": "Aus",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockjavascriptorvbscriptfromlaunchingdownloadedexecutablecontent_block": "Blockieren (scharf)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockjavascriptorvbscriptfromlaunchingdownloadedexecutablecontent_audit": "Ueberwachen (Audit)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockjavascriptorvbscriptfromlaunchingdownloadedexecutablecontent_warn": "Warnen"
+        }
+      },
+      {
+        "title": "Verwendung kopierter oder imitierter Systemtools blockieren",
+        "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockuseofcopiedorimpersonatedsystemtools",
+        "desiredValue": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockuseofcopiedorimpersonatedsystemtools_audit",
+        "valueMeaning": {
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockuseofcopiedorimpersonatedsystemtools_off": "Aus",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockuseofcopiedorimpersonatedsystemtools_block": "Blockieren (scharf)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockuseofcopiedorimpersonatedsystemtools_audit": "Ueberwachen (Audit)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockuseofcopiedorimpersonatedsystemtools_warn": "Warnen"
+        }
+      },
+      {
+        "title": "Webshell-Erstellung fuer Server blockieren",
+        "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockwebshellcreationforservers",
+        "desiredValue": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockwebshellcreationforservers_audit",
+        "valueMeaning": {
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockwebshellcreationforservers_off": "Aus",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockwebshellcreationforservers_block": "Blockieren (scharf)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockwebshellcreationforservers_audit": "Ueberwachen (Audit)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockwebshellcreationforservers_warn": "Warnen"
+        }
+      },
+      {
+        "title": "Win32-API-Aufrufe aus Office-Makros blockieren",
+        "settingDefinitionId": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockwin32apicallsfromofficemacros",
+        "desiredValue": "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockwin32apicallsfromofficemacros_audit",
+        "valueMeaning": {
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockwin32apicallsfromofficemacros_off": "Aus",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockwin32apicallsfromofficemacros_block": "Blockieren (scharf)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockwin32apicallsfromofficemacros_audit": "Ueberwachen (Audit)",
+          "device_vendor_msft_policy_config_defender_attacksurfacereductionrules_blockwin32apicallsfromofficemacros_warn": "Warnen"
+        }
+      }
+    ]
+  },
+  "revert": {
+    "strategy": "restoreFromBackup",
+    "note": "Backup vor Aenderung; Revert stellt Vorzustand wieder her bzw. loescht das angelegte Profil."
+  },
+  "dependsOn": [],
+  "verifyInTestTenant": "IDs aus Export 'TEMP-ASR-Export' (26.10.2026, 19 Regeln). Live pruefen: POST wird angenommen, Profil zeigt alle 19 Regeln auf 'Ueberwachen'. Werte _off/_block/_warn in valueMeaning sind nur Anzeige (Warn wird nicht von allen Regeln unterstuetzt).",
+  "references": [
+    "Defender CSP AttackSurfaceReductionRules",
+    "Microsoft Learn: Referenz zu ASR-Regeln"
+  ]
+}
